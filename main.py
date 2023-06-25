@@ -1,13 +1,21 @@
 import discord
 from discord.ext import commands
-from classes.EventState import EventStage, EventState
+from classes.EventStage import EventStage
 from classes.Configuration import Config
 from classes import Texts
 
 class NeuroEventBot(commands.Bot):
     def __init__(self, **args):
         super().__init__(command_prefix=Texts.PREFIX, **args)
-        self.state = EventState()        
+        
+        self.current = EventStage.NOT_STARTED
+        self.organizers = [
+            252453718165815296, #petrarkius
+        ]
+        
+        self.art_dict = {}
+        self.spectators = []
+        self.spectators_msg_id = None
         
     async def setup_hook(self):
         await self.tree.sync()
@@ -20,7 +28,7 @@ if __name__ == '__main__':
         await ctx.send(Texts.START)
         
         NEB.state.current = EventStage.GATHERING_ART
-
+        
 
     @NEB.hybrid_command()
     async def voting(ctx):
