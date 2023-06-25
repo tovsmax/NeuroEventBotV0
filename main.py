@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import discord
 from discord.ext import commands
-from classes.EventState import EventStatus, EventState
+from classes.EventState import EventStage, EventState
 
 load_dotenv()
 
@@ -26,7 +26,7 @@ async def on_ready():
 async def start(ctx):
     await ctx.send('Нейроивент начинается! Участники, скидывайте сгенеренные арты. Если Вы хотите просто проголосовать, то ставьте эмодзи 👀, чтобы стать зрителем.')
     
-    state.current = EventStatus.GATHERING_ART
+    state.current = EventStage.GATHERING_ART
 
 
 @bot.hybrid_command()
@@ -53,7 +53,7 @@ async def on_message(msg):
     if msg.author == bot.user:
         return
     
-    if state.current == EventStatus.GATHERING_ART:
+    if state.current == EventStage.GATHERING_ART:
         artist_id = msg.author.id
         art_title = msg.content
         

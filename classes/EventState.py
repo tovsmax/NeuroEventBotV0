@@ -1,6 +1,6 @@
 import enum
 
-class EventStatus(enum.Enum):
+class EventStage(enum.Enum):
     NOT_STARTED = 0
     GATHERING_ART = 1
     VOTING = 2
@@ -9,5 +9,9 @@ class EventStatus(enum.Enum):
     
 class EventState:
     def __init__(self) -> None:
-        self.current = EventStatus.NOT_STARTED
+        self.current = EventStage.NOT_STARTED
         self.art_dict = {}
+        self.organizers = [
+            252453718165815296, #petrarkius
+        ]
+        self.viewers = []
