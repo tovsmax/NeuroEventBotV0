@@ -1,63 +1,16 @@
 from dotenv import load_dotenv
 import os
-import discord
-from discord.ext import commands
-from classes.EventState import EventStage, EventState
+from discord import Intents
+from classes.NeuroEventBot import run_bot
 
-load_dotenv()
+if __name__ == '__main__':
+    load_dotenv()
 
-TOKEN = os.getenv('DISCORD_TOKEN')
+    TOKEN = os.getenv('DISCORD_TOKEN')
 
-intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
-intents.dm_messages = True
-
-bot = commands.Bot(command_prefix='!ne ', intents=intents)
-
-state = EventState()
-
-@bot.event
-async def on_ready():
-    await bot.tree.sync()
-
-
-@bot.hybrid_command()
-async def start(ctx):
-    await ctx.send('Нейроивент начинается! Участники, скидывайте сгенеренные арты. Если Вы хотите просто проголосовать, то ставьте эмодзи 👀, чтобы стать зрителем.')
+    intents = Intents.default()
+    intents.message_content = True
+    intents.members = True
+    intents.dm_messages = True
     
-    state.current = EventStage.GATHERING_ART
-
-
-@bot.hybrid_command()
-async def voting(ctx):
-    pass
-    
-
-@bot.hybrid_command()
-async def finish(ctx):
-    pass
-
-
-@bot.command()
-async def show_id(ctx):
-    await ctx.reply('Зырь в консоль.')
-    
-    print(f'{ctx.author}: {ctx.author.id}')
-
-
-@bot.event
-async def on_message(msg):
-    await bot.process_commands(msg)
-    
-    if msg.author == bot.user:
-        return
-    
-    if state.current == EventStage.GATHERING_ART:
-        artist_id = msg.author.id
-        art_title = msg.content
-        
-        state.art_dict[artist_id] = art_title
-
-
-bot.run(TOKEN)
+    run_bot(intents, TOKEN)
