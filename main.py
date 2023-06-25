@@ -19,7 +19,7 @@ state = EventState()
 
 @bot.event
 async def on_ready():
-    await bot.tree.sync()    
+    await bot.tree.sync()
 
 
 @bot.hybrid_command()
@@ -27,7 +27,8 @@ async def start(ctx):
     await ctx.send('Нейроивент начинается! Участники, скидывайте сгенеренные арты. Если Вы хотите просто проголосовать, то ставьте эмодзи 👀, чтобы стать зрителем.')
     
     state.current = EventStatus.GATHERING_ART
-    
+
+
 @bot.hybrid_command()
 async def voting(ctx):
     pass
@@ -37,8 +38,18 @@ async def voting(ctx):
 async def finish(ctx):
     pass
 
+
+@bot.command()
+async def show_id(ctx):
+    await ctx.reply('Зырь в консоль.')
+    
+    print(f'{ctx.author}: {ctx.author.id}')
+
+
 @bot.event
 async def on_message(msg):
+    await bot.process_commands(msg)
+    
     if msg.author == bot.user:
         return
     
