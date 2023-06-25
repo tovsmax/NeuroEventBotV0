@@ -1,38 +1,32 @@
 import discord
-from discord.ext import commands
 from classes.EventStage import EventStage
 from classes.Configuration import Config
-from classes import Texts
-
-class NeuroEventBot(commands.Bot):
-    def __init__(self, **args):
-        super().__init__(command_prefix=Texts.PREFIX, **args)
-        
-        self.current = EventStage.NOT_STARTED
-        self.organizers = [
-            252453718165815296, #petrarkius
-        ]
-        
-        self.art_dict = {}
-        self.spectators = []
-        self.spectators_msg_id = None
-        
-    async def setup_hook(self):
-        await self.tree.sync()
+from classes.NeuroEventBot import NeuroEventBot
+from classes.Texts import Texts
+from classes.NeuroEventActions import Voting
 
 if __name__ == '__main__':
     NEB = NeuroEventBot(intents=Config.intents)
 
     @NEB.hybrid_command()
     async def start(ctx):
-        await ctx.send(Texts.START)
+        NEB.current_stage = EventStage.GATHERING_ART
         
-        NEB.state.current = EventStage.GATHERING_ART
-        
+        sended_msg = await ctx.send(Texts.START)
+        sended_msg.add_reaction('👀')        
+        NEB.spectators_msg_id = sended_msg.id
 
     @NEB.hybrid_command()
     async def voting(ctx):
-        pass
+        if NEB.current_stage != EventStage.GATHERING_ART:
+            ctx.reply(Texts.VOTING_GATHERING_NOT_STARTED)
+            return
+        
+        voting = Voting(NEB)
+        
+        await voting.send_lists_to_spectators(ctx)
+        await voting.send_lists_to_artists()
+        await voting.send_lists_to_organizers()
         
 
     @NEB.hybrid_command()
@@ -54,11 +48,11 @@ if __name__ == '__main__':
         if msg.author == NEB.user:
             return
         
-        if NEB.state.current == EventStage.GATHERING_ART:
+        if NEB.current_stage == EventStage.GATHERING_ART:
             artist_id = msg.author.id
             art_title = msg.content
             
-            NEB.state.art_dict[artist_id] = art_title
+            NEB.art_dict[artist_id] = art_title
             
     NEB.run(Config.token)
 
