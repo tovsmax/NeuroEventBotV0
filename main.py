@@ -14,7 +14,8 @@ if __name__ == '__main__':
         NEB.current_stage = EventStage.GATHERING_ART
         
         sended_msg = await ctx.send(Texts.START)
-        await sended_msg.add_reaction('👀')
+        SPECTATOR_EMOJI = '👀'
+        await sended_msg.add_reaction(SPECTATOR_EMOJI)
         NEB.spectators_msg_id = sended_msg.id
 
     @NEB.hybrid_command()
@@ -33,7 +34,7 @@ if __name__ == '__main__':
 
     @NEB.hybrid_command()
     async def finish(ctx):
-        pass
+        await ctx.reply(NEB.art_top)
 
 
     @NEB.command()
@@ -42,15 +43,15 @@ if __name__ == '__main__':
         
         print(f'{ctx.author}: {ctx.author.id}')
 
-
     @NEB.event
-    async def on_message(msg):
-        await NEB.process_commands(msg)
-        
-        # TODO: Здесь нужно посмотреть, не идёт дальше код при срабатывании команды
-        
+    async def on_message(msg: discord.Message):
         if msg.author == NEB.user:
             return
+        
+        if msg.content.startswith(Texts.PREFIX):
+            await NEB.process_commands(msg)
+        
+        print(msg.content)
         
         if NEB.current_stage == EventStage.GATHERING_ART:
             artist_id = msg.author.id
@@ -62,7 +63,15 @@ if __name__ == '__main__':
     async def test(ctx: Context):
         voting = Voting(NEB)
         
-        await voting._send_list(ctx.author, ['kek'])
+        list_items = [
+            'olol',
+            'kek',
+            'lolec',
+            'cheburek',
+            'lel'
+        ]
+        
+        await voting._send_list(ctx.author, list_items)
             
     NEB.run(Config.token)
 

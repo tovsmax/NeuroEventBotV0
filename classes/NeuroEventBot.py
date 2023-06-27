@@ -14,6 +14,7 @@ class NeuroEventBot(commands.Bot):
         self.art_dict = {}
         self.spectators = []
         self.spectators_msg_id = None
+        self.art_top = {}
         
     async def setup_hook(self):
         await self.tree.sync()

@@ -4,3 +4,9 @@ class Texts:
 
     VOTING_GATHERING_NOT_STARTED = '❌ Участники ивента пока не начали скидывать свои работы!'
     VOTING_STARTED = 'Бланки списков разосланы.'
+    VOTING_TITLE_PLACEHOLDER = 'Выбери арт на {0}-е место'
+    VOTING_LIST_BEFORE_TEXT = 'Составь рейтинг сгенеренных артов. Один и тот же арт не может занимать разные места!'
+    VOTING_BUTTON_LABEL = 'Отправить рейтинг'
+    VOTING_MULTIPLE_RANK = '❌ Один и тот же арт не должен занимать разные места!'
+    VOTING_EMPTY_RANK = '❌ Не все арты были оценены!'
+    VOTING_REPLY = 'Ваш список отправлен!'
