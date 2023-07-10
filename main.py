@@ -50,8 +50,8 @@ if __name__ == '__main__':
         
         if msg.content.startswith(Texts.PREFIX):
             await NEB.process_commands(msg)
+            return
         
-        print(msg.content)
         
         if NEB.current_stage == EventStage.GATHERING_ART:
             artist_id = msg.author.id

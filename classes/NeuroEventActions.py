@@ -5,6 +5,7 @@ from discord.ext.commands import Context
 from discord import User
 from classes.NeuroEventBot import NeuroEventBot
 from classes.Texts import Texts
+from classes.VoteList import ListCategory
 
 class VoteListDropdown(ui.Select):
     def __init__(self, rank, list_items):
@@ -16,7 +17,7 @@ class VoteListDropdown(ui.Select):
             options.append(option)
         
         super().__init__(
-            placeholder=f'**{Texts.VOTING_TITLE_PLACEHOLDER.format(str(rank))}**',
+            placeholder=f'{Texts.VOTING_TITLE_PLACEHOLDER.format(str(rank))}',
             options=options
         )
     
@@ -59,10 +60,13 @@ class VoteListView(ui.View):
         if len(set(top_items)) != len(top_items):
             await send(Texts.VOTING_MULTIPLE_RANK)
             return
+        
+        if  ListCategory
 
         await send(Texts.VOTING_REPLY)
         
-        self.NEB.art_top['test'] = top_items
+        cur_category = 'test'
+        self.NEB.art_top[cur_category] = top_items
         
         self.stop()
 
@@ -73,7 +77,7 @@ class Voting:
     
     async def _send_list(self, voter: User, list_items: list[str]):        
         await voter.send(
-            Texts.VOTING_LIST_BEFORE_TEXT,
+            Texts.VOTING_LIST_BEFORE_TEXT.format(),
             view=VoteListView(list_items, self.NEB)
         )
     
@@ -81,16 +85,16 @@ class Voting:
         sm_id = self.NEB.spectators_msg_id
         if sm_id == None:
             raise ValueError('There is no msg id, where reactions can be obtained!')
-        else:
-            spectators_msg = await ctx.channel.fetch_message(sm_id)
-            SPECTATOR_EMOJI_IND = 0 # i hope this is 0
-            spectators = spectators_msg.reactions[SPECTATOR_EMOJI_IND].users()
-            spectators = [spectator async for spectator in spectators]
-            
-            HUMANS_START_IND = 1
-            for spectator in spectators[HUMANS_START_IND:]:
-                list_items = list(self.NEB.art_dict.values())
-                await self._send_list(spectator, list_items)
+        
+        spectators_msg = await ctx.channel.fetch_message(sm_id)
+        SPECTATOR_EMOJI_IND = 0
+        spectators = spectators_msg.reactions[SPECTATOR_EMOJI_IND].users()
+        spectators = [spectator async for spectator in spectators]
+        
+        HUMANS_START_IND = 1
+        for spectator in spectators[HUMANS_START_IND:]:
+            list_items = list(self.NEB.art_dict.values())
+            await self._send_list(spectator, list_items)
     
     
     async def send_lists_to_artists(self):
