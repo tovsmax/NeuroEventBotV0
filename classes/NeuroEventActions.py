@@ -61,7 +61,7 @@ class VoteListView(ui.View):
             await send(Texts.VOTING_MULTIPLE_RANK)
             return
         
-        if  ListCategory
+        # if  ListCategory
 
         await send(Texts.VOTING_REPLY)
         
@@ -105,3 +105,59 @@ class Voting:
 
     async def send_lists_to_organizers(self):
         pass
+    
+class Finishing:
+    # total_scores: dict[str, dict[str, int]]
+    NEB: NeuroEventBot
+    
+    def __init__(self, NEB: NeuroEventBot = None) -> None:
+        self.NEB = NEB
+    
+    def _get_scores(self) -> dict[str, dict[str, int]]:
+        scores = {
+            'Эстетичность': {},
+            'Культурность': {},
+            'Всратость': {},
+            'Общий': {},
+        }
+
+        scores['Общий'] = {}
+
+        for table in tables:
+            category = table.name
+            
+            for rank, title in table.items():
+                cur_score = scores[category].get(title, 0)
+                scores[category][title] = cur_score + (7 - int(rank))
+                
+                cur_score = scores['Общий'].get(title, 0)
+                scores['Общий'][title] = cur_score + (7 - int(rank))
+        return    
+    
+    def _sort_scores(self, category_scores: dict[str, int], reverse=True) -> list[tuple[str, int]]:
+        sorting_func = lambda x: x[1]
+        
+        return sorted(category_scores.items(), key=sorting_func, reverse=reverse)
+    
+    def _make_top(self, category_name: str, sorted_category_scores: list[tuple[str, int]]):        
+        enum_scores = enumerate(sorted_category_scores)
+        rank_template = '{}) {}: {}'
+        
+        rank_rows = [
+            rank_template.format(ind, title, score)
+            for ind, (title, score) in enum_scores
+        ]
+        
+        top = '\n'.join(rank_rows)
+        return f'# {category_name}\n\n{top}'
+    
+    def make_tops(self):
+        total_scores = self._get_scores()        
+        
+        tops = []
+        
+        for category_name, category_scores in total_scores.items():
+            sorted_scores = self._sort_scores(category_scores)
+            tops.append(self._make_top(category_name, sorted_scores))
+        
+        return '\n\n'.join()
