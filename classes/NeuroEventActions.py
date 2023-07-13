@@ -6,32 +6,42 @@ from discord import User
 from classes.NeuroEventBot import NeuroEventBot
 from classes.Texts import Texts
 from classes.VoteList import ListCategory
+from typing import Optional
 
 class VoteListDropdown(ui.Select):
-    def __init__(self, rank, list_items):
+    rank: int
+    
+    def __init__(self, rank: int, list_items: list[str]):
         self.rank = rank
         
         options = []
         for art_title in list_items:
             option = SelectOption(label=art_title)
             options.append(option)
-        
+                
         super().__init__(
             placeholder=f'{Texts.VOTING_TITLE_PLACEHOLDER.format(str(rank))}',
-            options=options
+            options=options,
         )
     
     async def callback(self, interaction: discord.Interaction):
-        self.view.top_list[self.rank] = self.values[0]
+        art_title = self.values[0]
+        self.view.top_list[self.rank] = art_title
+        self.chosen_art = art_title
         
         await interaction.response.defer()
 
 
 class VoteListView(ui.View):
-    def __init__(self, list_items, NEB: NeuroEventBot):
+    top_list: dict[int, Optional[str]]
+    list_items: list[str]
+    
+    def __init__(self, list_items: list[str], NEB: NeuroEventBot, category: ListCategory):
         super().__init__()
         
         self.NEB = NEB
+        self.category = category
+        self.list_items = list_items
         
         PREMAX_ROW_COUNT = 4
         item_count = len(list_items)
@@ -49,7 +59,7 @@ class VoteListView(ui.View):
         style=discord.ButtonStyle.primary,
         row=4
     )
-    async def submit_button(self, interaction: discord.Interaction, btn):
+    async def submit_button(self, interaction: discord.Interaction, btn: discord.ui.Button):
         send = interaction.response.send_message        
         top_items = self.top_list.values()
                 
@@ -61,12 +71,22 @@ class VoteListView(ui.View):
             await send(Texts.VOTING_MULTIPLE_RANK)
             return
         
-        # if  ListCategory
-
-        await send(Texts.VOTING_REPLY)
+        cur_user_id = interaction.user.id
+        cur_cat = self.category
+        self.NEB.top_lists[cur_user_id][cur_cat] = top_items
         
-        cur_category = 'test'
-        self.NEB.art_top[cur_category] = top_items
+        if cur_cat == ListCategory.AESTHETICS:
+            await send(
+                Texts.VOTING_EXTRA.format(Texts.VOTING_DEGENERATENESS),
+                view=VoteListView(self.list_items, self.NEB, ListCategory.DEGENERATENESS)
+            )
+        elif cur_cat == ListCategory.DEGENERATENESS:
+            await send(
+                Texts.VOTING_EXTRA.format(Texts.VOTING_DANKNESS),
+                view=VoteListView(self.list_items, self.NEB, ListCategory.DANKNESS)
+            )
+        else:
+            await send(Texts.VOTING_REPLY)
         
         self.stop()
 
@@ -75,10 +95,16 @@ class Voting:
     def __init__(self, NEB: NeuroEventBot) -> None:
         self.NEB = NEB
     
-    async def _send_list(self, voter: User, list_items: list[str]):        
+    async def _send_list(self, voter: User, list_items: list[str]):
+        self.NEB.top_lists[voter.id] = {
+            ListCategory.AESTHETICS: {},
+            ListCategory.DEGENERATENESS: {},
+            ListCategory.DANKNESS: {}
+        }
+        
         await voter.send(
-            Texts.VOTING_LIST_BEFORE_TEXT.format(),
-            view=VoteListView(list_items, self.NEB)
+            Texts.VOTING_LIST_BEFORE_TEXT.format(Texts.VOTING_AESTHETICS),
+            view=VoteListView(list_items, self.NEB, ListCategory.AESTHETICS)
         )
     
     async def send_lists_to_spectators(self, ctx: Context):

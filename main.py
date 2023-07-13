@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     @NEB.hybrid_command()
     async def finish(ctx):
-        await ctx.reply(NEB.art_top)
+        await ctx.reply(NEB.top_lists)
 
 
     @NEB.command()
