@@ -4,7 +4,7 @@ from classes.EventStage import EventStage
 from classes.Configuration import Config
 from classes.NeuroEventBot import NeuroEventBot
 from classes.Texts import Texts
-from classes.NeuroEventActions import Voting
+from classes.NeuroEventActions import Voting, Finishing
 
 if __name__ == '__main__':
     NEB = NeuroEventBot(intents=Config.intents)
@@ -51,16 +51,26 @@ if __name__ == '__main__':
         if msg.content.startswith(Texts.PREFIX):
             await NEB.process_commands(msg)
             return
-        
-        
-        if NEB.current_stage == EventStage.GATHERING_ART:
+                
+        if NEB.current_stage == EventStage.GATHERING_ART and msg.guild is None:
+            if msg.attachments == []:
+                await msg.reply('❌ There is no art in message')
+                return
+            
             artist_id = msg.author.id
             art_title = msg.content
             
             NEB.art_dict[artist_id] = art_title
-            
+            return
+    
     @NEB.hybrid_command()
-    async def test(ctx: Context):
+    async def order_arts(ctx: Context, artists: str):
+        user = NEB.get_user(ctx.message.author.id)
+        await ctx.reply(user.display_name)
+        return
+    
+    @NEB.hybrid_command()
+    async def test_voting(ctx: Context):
         voting = Voting(NEB)
         
         list_items = [
@@ -71,7 +81,11 @@ if __name__ == '__main__':
             'lel'
         ]
         
-        await voting._send_list(ctx.author, list_items)
+        await voting.send_lists_to_artists(ctx)
+        
+    async def test_finish(ctx: Context):
+        Finishing(NEB)
+        pass
             
     NEB.run(Config.token)
 

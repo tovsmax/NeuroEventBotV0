@@ -2,7 +2,7 @@ import discord
 from discord import ui
 from discord import SelectOption
 from discord.ext.commands import Context
-from discord import User
+from discord import User, Message
 from classes.NeuroEventBot import NeuroEventBot
 from classes.Texts import Texts
 from classes.VoteList import ListCategory
@@ -123,13 +123,13 @@ class Voting:
             await self._send_list(spectator, list_items)
     
     
-    async def send_lists_to_artists(self):
-        await self.NEB.fetch_user()
-        for artist_id in self.NEB.state.art_dict:
+    async def send_lists_to_artists(self, ctx: Context):
+        for artist_id in self.NEB.art_dict:
             self.NEB.fetch_user()
 
 
     async def send_lists_to_organizers(self):
+        await self.NEB.fetch_user()
         pass
     
 class Finishing:
