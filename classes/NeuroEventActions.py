@@ -123,14 +123,17 @@ class Voting:
             await self._send_list(spectator, list_items)
     
     
-    async def send_lists_to_artists(self, ctx: Context):
-        for artist_id in self.NEB.art_dict:
-            self.NEB.fetch_user()
-
-
-    async def send_lists_to_organizers(self):
-        await self.NEB.fetch_user()
-        pass
+    async def send_lists_to_artists(self):
+        artists = [self.NEB.get_user(artist_id) for artist_id in self.NEB.art_dict]
+        
+        for artist in artists:
+            list_items = [
+                art_title
+                for artist_id, art_title in self.NEB.art_dict.items()
+                if artist_id != artist.id
+            ]
+            
+            await self._send_list(artist, list_items)
     
 class Finishing:
     # total_scores: dict[str, dict[str, int]]
