@@ -184,7 +184,7 @@ class Finishing:
         output_result = '\n\n'.join(voting_results)
         return output_result
     
-    def get_tops(self):
+    def get_voting_result(self):
         top_lists = self.NEB.top_lists
         
         scores = self._make_scores(top_lists)
