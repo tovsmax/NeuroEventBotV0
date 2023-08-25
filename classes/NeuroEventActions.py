@@ -107,6 +107,11 @@ class Voting:
             view=VoteListView(list_items, self.NEB, ListCategory.AESTHETICS)
         )
     
+    async def _gather_arts(self, ctx: Context):
+        
+        ctx.channel.history()
+        
+    
     async def send_lists_to_spectators(self, ctx: Context):
         spectators = await self.NEB.get_spectators(ctx)
         
