@@ -43,8 +43,9 @@ if __name__ == '__main__':
             return
         
         finishing = Finishing(NEB)
+        results = finishing.get_voting_result()
         
-        await ctx.reply(NEB.top_lists)
+        await ctx.reply(results)
 
 
     @NEB.command()
