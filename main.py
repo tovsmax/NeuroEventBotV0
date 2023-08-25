@@ -26,14 +26,24 @@ if __name__ == '__main__':
                 
         voting = Voting(NEB)
         
+        await voting.send_lists_to_artists()
         await voting.send_lists_to_spectators(ctx)
-        # await voting.send_lists_to_artists()
-        # await voting.send_lists_to_organizers()
         
         await ctx.reply(Texts.VOTING_STARTED)
 
     @NEB.hybrid_command()
-    async def finish(ctx):
+    async def finish(ctx: Context, force_finish: bool = False):
+        artist_count = len(NEB.get_artists())
+        spectator_count = len(await NEB.get_spectators())
+        voter_count = artist_count + spectator_count
+        
+        voted_count = len(NEB.top_lists)
+        if voted_count < voter_count and not force_finish:
+            await ctx.reply(Texts.FINISH_NOT_ALL_VOTED.format(voted_count, voter_count))
+            return
+        
+        finishing = Finishing(NEB)
+        
         await ctx.reply(NEB.top_lists)
 
 
