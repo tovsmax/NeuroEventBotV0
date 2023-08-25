@@ -19,6 +19,10 @@ if __name__ == '__main__':
         NEB.spectators_msg_id = sended_msg.id
 
     @NEB.hybrid_command()
+    async def share_art(ctx: Context, artist: str):
+        pass
+
+    @NEB.hybrid_command()
     async def voting(ctx: Context):
         if NEB.current_stage != EventStage.GATHERING_ART:
             await ctx.reply(Texts.VOTING_GATHERING_NOT_STARTED)
