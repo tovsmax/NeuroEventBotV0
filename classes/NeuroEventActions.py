@@ -155,7 +155,7 @@ class Finishing:
         for categorized_top_list in top_lists.values():
             for category, top_list in categorized_top_list.items():
                 category_name = list_category_to_str[category]
-                for rank, art_title in top_list:
+                for rank, art_title in top_list.items():
                     category_score = scores[category_name].get(art_title, 0)
                     scores[category_name][art_title] = category_score + (5 - rank)
                     
