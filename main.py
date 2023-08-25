@@ -54,13 +54,18 @@ if __name__ == '__main__':
                 
         if NEB.current_stage == EventStage.GATHERING_ART and msg.guild is None:
             if msg.attachments == []:
-                await msg.reply('❌ There is no art in message')
+                await msg.reply(Texts.GATHERING_ART_IS_NOT_ATTACHED)
+                return
+            
+            if msg.content == '':
+                await msg.reply(Texts.GATHERING_ART_TITLE_IS_NOT_PROVIDED)
                 return
             
             artist_id = msg.author.id
             art_title = msg.content
-            
             NEB.art_dict[artist_id] = art_title
+            
+            await msg.reply(Texts.GATHERING_ART_IS_ACCEPTED)
             return
     
     @NEB.hybrid_command()
@@ -80,6 +85,8 @@ if __name__ == '__main__':
             'cheburek',
             'lel'
         ]
+        
+        voting.NEB.art_dict[ctx.author.id] = 'kek'
         
         await voting.send_lists_to_artists(ctx)
         
