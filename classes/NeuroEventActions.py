@@ -131,11 +131,13 @@ class Voting:
 class Finishing:
     NEB: NeuroEventBot
     
-    def __init__(self, NEB: NeuroEventBot = None) -> None:
+    def __init__(self, NEB: NeuroEventBot) -> None:
         self.NEB = NEB
     
-    def get_tops(self):
-        top_lists = self.NEB.top_lists
+    @staticmethod
+    def _make_scores(
+        top_lists: dict[int, dict[ListCategory, dict[int, str]]]
+    ) -> dict[str, dict[str, int]]:
         
         scores = {
             'Эстетичность': {},
@@ -160,7 +162,10 @@ class Finishing:
                     total_score = scores['Общий'].get(art_title, 0)
                     scores['Общий'][art_title] = total_score + (5 - rank)
         
-        
+        return scores
+    
+    @staticmethod
+    def _make_output(scores: dict[str, dict[str, int]]) -> str:
         sort_by_score = lambda x: -x[1]
         voting_results = []
         for score_category, scored_arts in scores.items():            
@@ -175,7 +180,16 @@ class Finishing:
             )
             
             voting_results.append(voting_result)
-            
-        return '\n\n'.join(voting_results)
+        
+        output_result = '\n\n'.join(voting_results)
+        return output_result
+    
+    def get_tops(self):
+        top_lists = self.NEB.top_lists
+        
+        scores = self._make_scores(top_lists)
+        result = self._make_output(scores)
+        
+        return result
         
         
