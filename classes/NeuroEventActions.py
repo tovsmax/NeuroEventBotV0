@@ -60,8 +60,8 @@ class VoteListView(ui.View):
         row=4
     )
     async def submit_button(self, interaction: discord.Interaction, btn: discord.ui.Button):
-        send = interaction.response.send_message        
-        top_items = self.top_list.values()
+        send = interaction.response.send_message
+        top_items = list(self.top_list.values())
                 
         if None in top_items:
             await send(Texts.VOTING_EMPTY_RANK)
@@ -108,14 +108,7 @@ class Voting:
         )
     
     async def send_lists_to_spectators(self, ctx: Context):
-        sm_id = self.NEB.spectators_msg_id
-        if sm_id == None:
-            raise ValueError('There is no msg id, where reactions can be obtained!')
-        
-        spectators_msg = await ctx.channel.fetch_message(sm_id)
-        SPECTATOR_EMOJI_IND = 0
-        spectators = spectators_msg.reactions[SPECTATOR_EMOJI_IND].users()
-        spectators = [spectator async for spectator in spectators]
+        spectators = await self.NEB.get_spectators(ctx)
         
         HUMANS_START_IND = 1
         for spectator in spectators[HUMANS_START_IND:]:
@@ -142,51 +135,85 @@ class Finishing:
     def __init__(self, NEB: NeuroEventBot = None) -> None:
         self.NEB = NEB
     
-    def _get_scores(self) -> dict[str, dict[str, int]]:
+    # def _get_scores(self) -> dict[str, dict[str, int]]:
+    #     scores = {
+    #         'Эстетичность': {},
+    #         'Культурность': {},
+    #         'Всратость': {},
+    #         'Общий': {},
+    #     }
+
+    #     scores['Общий'] = {}
+
+    #     for table in tables:
+    #         category = table.name
+            
+    #         for rank, title in table.items():
+    #             cur_score = scores[category].get(title, 0)
+    #             scores[category][title] = cur_score + (7 - int(rank))
+                
+    #             cur_score = scores['Общий'].get(title, 0)
+    #             scores['Общий'][title] = cur_score + (7 - int(rank))
+    #     return
+    
+    # def _sort_scores(self, category_scores: dict[str, int], reverse=True) -> list[tuple[str, int]]:
+    #     sorting_func = lambda x: x[1]
+        
+    #     return sorted(category_scores.items(), key=sorting_func, reverse=reverse)
+    
+    # def _make_top(self, category_name: str, sorted_category_scores: list[tuple[str, int]]):
+    #     enum_scores = enumerate(sorted_category_scores)
+    #     rank_template = '{}) {}: {}'
+        
+    #     rank_rows = [
+    #         rank_template.format(ind, title, score)
+    #         for ind, (title, score) in enum_scores
+    #     ]
+        
+    #     top = '\n'.join(rank_rows)
+    #     return f'# {category_name}\n\n{top}'
+    
+    # def make_tops(self):
+    #     total_scores = self._get_scores()        
+        
+    #     tops = []
+        
+    #     for category_name, category_scores in total_scores.items():
+    #         sorted_scores = self._sort_scores(category_scores)
+    #         tops.append(self._make_top(category_name, sorted_scores))
+        
+    #     return '\n\n'.join()
+    
+    def get_tops(self):
+        top_lists = self.NEB.top_lists
+        
         scores = {
             'Эстетичность': {},
             'Культурность': {},
             'Всратость': {},
             'Общий': {},
         }
-
-        scores['Общий'] = {}
-
-        for table in tables:
-            category = table.name
-            
-            for rank, title in table.items():
-                cur_score = scores[category].get(title, 0)
-                scores[category][title] = cur_score + (7 - int(rank))
-                
-                cur_score = scores['Общий'].get(title, 0)
-                scores['Общий'][title] = cur_score + (7 - int(rank))
-        return    
-    
-    def _sort_scores(self, category_scores: dict[str, int], reverse=True) -> list[tuple[str, int]]:
-        sorting_func = lambda x: x[1]
         
-        return sorted(category_scores.items(), key=sorting_func, reverse=reverse)
-    
-    def _make_top(self, category_name: str, sorted_category_scores: list[tuple[str, int]]):        
-        enum_scores = enumerate(sorted_category_scores)
-        rank_template = '{}) {}: {}'
+        list_category_to_str = {
+            ListCategory.AESTHETICS: 'Эстетичность',
+            ListCategory.DEGENERATENESS: 'Культурность',
+            ListCategory.DANKNESS: 'Всратость',
+        }
         
-        rank_rows = [
-            rank_template.format(ind, title, score)
-            for ind, (title, score) in enum_scores
-        ]
+        for categorized_top_list in top_lists.values():
+            for category, top_list in categorized_top_list.items():
+                category_name = list_category_to_str[category]
+                for rank, art_title in top_list:
+                    cur_score = scores[category_name].get(art_title, 0)
+                    scores[category_name][art_title] = cur_score + (5 - rank)
         
-        top = '\n'.join(rank_rows)
-        return f'# {category_name}\n\n{top}'
-    
-    def make_tops(self):
-        total_scores = self._get_scores()        
         
-        tops = []
+        TEMPL = (
+            "**Эстетичность:**"
+            "\n{}\n"
+            "**Культурность:**"
+            "\n{}\n"
+            "**Всратость:**"
+            "\n{}\n"
+        )
         
-        for category_name, category_scores in total_scores.items():
-            sorted_scores = self._sort_scores(category_scores)
-            tops.append(self._make_top(category_name, sorted_scores))
-        
-        return '\n\n'.join()
