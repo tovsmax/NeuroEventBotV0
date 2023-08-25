@@ -129,60 +129,10 @@ class Voting:
             await self._send_list(artist, list_items)
     
 class Finishing:
-    # total_scores: dict[str, dict[str, int]]
     NEB: NeuroEventBot
     
     def __init__(self, NEB: NeuroEventBot = None) -> None:
         self.NEB = NEB
-    
-    # def _get_scores(self) -> dict[str, dict[str, int]]:
-    #     scores = {
-    #         'Эстетичность': {},
-    #         'Культурность': {},
-    #         'Всратость': {},
-    #         'Общий': {},
-    #     }
-
-    #     scores['Общий'] = {}
-
-    #     for table in tables:
-    #         category = table.name
-            
-    #         for rank, title in table.items():
-    #             cur_score = scores[category].get(title, 0)
-    #             scores[category][title] = cur_score + (7 - int(rank))
-                
-    #             cur_score = scores['Общий'].get(title, 0)
-    #             scores['Общий'][title] = cur_score + (7 - int(rank))
-    #     return
-    
-    # def _sort_scores(self, category_scores: dict[str, int], reverse=True) -> list[tuple[str, int]]:
-    #     sorting_func = lambda x: x[1]
-        
-    #     return sorted(category_scores.items(), key=sorting_func, reverse=reverse)
-    
-    # def _make_top(self, category_name: str, sorted_category_scores: list[tuple[str, int]]):
-    #     enum_scores = enumerate(sorted_category_scores)
-    #     rank_template = '{}) {}: {}'
-        
-    #     rank_rows = [
-    #         rank_template.format(ind, title, score)
-    #         for ind, (title, score) in enum_scores
-    #     ]
-        
-    #     top = '\n'.join(rank_rows)
-    #     return f'# {category_name}\n\n{top}'
-    
-    # def make_tops(self):
-    #     total_scores = self._get_scores()        
-        
-    #     tops = []
-        
-    #     for category_name, category_scores in total_scores.items():
-    #         sorted_scores = self._sort_scores(category_scores)
-    #         tops.append(self._make_top(category_name, sorted_scores))
-        
-    #     return '\n\n'.join()
     
     def get_tops(self):
         top_lists = self.NEB.top_lists
@@ -204,16 +154,28 @@ class Finishing:
             for category, top_list in categorized_top_list.items():
                 category_name = list_category_to_str[category]
                 for rank, art_title in top_list:
-                    cur_score = scores[category_name].get(art_title, 0)
-                    scores[category_name][art_title] = cur_score + (5 - rank)
+                    category_score = scores[category_name].get(art_title, 0)
+                    scores[category_name][art_title] = category_score + (5 - rank)
+                    
+                    total_score = scores['Общий'].get(art_title, 0)
+                    scores['Общий'][art_title] = total_score + (5 - rank)
         
         
-        TEMPL = (
-            "**Эстетичность:**"
-            "\n{}\n"
-            "**Культурность:**"
-            "\n{}\n"
-            "**Всратость:**"
-            "\n{}\n"
-        )
+        sort_by_score = lambda x: -x[1]
+        voting_results = []
+        for score_category, scored_arts in scores.items():            
+            sorted_score = sorted(scored_arts.items(), key=sort_by_score)
+            
+            voting_result = '\n'.join(
+                [f'**{score_category}:**']
+                + [
+                    f'{ind+1}) {art_title}: {art_score}'
+                    for ind, (art_title, art_score) in enumerate(sorted_score)
+                ]
+            )
+            
+            voting_results.append(voting_result)
+            
+        return '\n\n'.join(voting_results)
+        
         
