@@ -25,7 +25,7 @@ class TestNeuroEventActions(unittest.TestCase):
         top_lists = {
             123: {
                 ListCategory.AESTHETICS: {
-                    1: 'EBONYA',
+                    1: 'Rrt',
                     2: 'Путь я щастью превозмогая боль и трудности',
                     3: 'Слиза',
                     4: 'Зато не подмышки',
@@ -46,14 +46,14 @@ class TestNeuroEventActions(unittest.TestCase):
             567: {
                 ListCategory.AESTHETICS: {
                     1: 'EBONYA',
-                    2: 'Путь я щастью превозмогая боль и трудности',
+                    2: 'Rrt',
                     3: 'Слиза',
                     4: 'Зато не подмышки',
                 },
                 ListCategory.DANKNESS: {
                     1: 'EBONYA',
                     2: 'Путь я щастью превозмогая боль и трудности',
-                    3: 'Слиза',
+                    3: 'Rrt',
                     4: 'Зато не подмышки',
                 },
                 ListCategory.DEGENERATENESS: {
@@ -67,7 +67,9 @@ class TestNeuroEventActions(unittest.TestCase):
         return top_lists
 
     def test_get_voting_result(self):
-        self.finishing.get_voting_result()
+        self.finishing.NEB.top_lists = self._create_top_lists()
+        
+        print(self.finishing.get_voting_result())
         
 if __name__ == '__main__':
     unittest.main()
