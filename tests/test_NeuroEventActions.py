@@ -19,8 +19,54 @@ class TestNeuroEventActions(unittest.TestCase):
             4: 'Зато не подмышки',
         }
         return top_list
+    
+    @staticmethod
+    def _create_top_lists() -> dict[int, dict[ListCategory, dict[int, str]]]:
+        top_lists = {
+            123: {
+                ListCategory.AESTHETICS: {
+                    1: 'EBONYA',
+                    2: 'Путь я щастью превозмогая боль и трудности',
+                    3: 'Слиза',
+                    4: 'Зато не подмышки',
+                },
+                ListCategory.DANKNESS: {
+                    1: 'EBONYA',
+                    2: 'Путь я щастью превозмогая боль и трудности',
+                    3: 'Слиза',
+                    4: 'Зато не подмышки',
+                },
+                ListCategory.DEGENERATENESS: {
+                    1: 'EBONYA',
+                    2: 'Путь я щастью превозмогая боль и трудности',
+                    3: 'Слиза',
+                    4: 'Зато не подмышки',
+                },
+            },
+            567: {
+                ListCategory.AESTHETICS: {
+                    1: 'EBONYA',
+                    2: 'Путь я щастью превозмогая боль и трудности',
+                    3: 'Слиза',
+                    4: 'Зато не подмышки',
+                },
+                ListCategory.DANKNESS: {
+                    1: 'EBONYA',
+                    2: 'Путь я щастью превозмогая боль и трудности',
+                    3: 'Слиза',
+                    4: 'Зато не подмышки',
+                },
+                ListCategory.DEGENERATENESS: {
+                    1: 'EBONYA',
+                    2: 'Путь я щастью превозмогая боль и трудности',
+                    3: 'Слиза',
+                    4: 'Зато не подмышки',
+                },
+            },
+        }
+        return top_lists
 
-    def test_get_voting_result(self):        
+    def test_get_voting_result(self):
         self.finishing.get_voting_result()
         
 if __name__ == '__main__':
