@@ -35,12 +35,16 @@ class NeuroEventBot(commands.Bot):
     async def setup_hook(self):
         await self.tree.sync()
     
-    async def get_spectators(self, ctx: Context) -> list[Union[User, Member]]:
+    async def _get_gathering_spectators_msg(self, ctx: Context):
         sm_id = self.spectators_msg_id
         if sm_id == None:
             raise ValueError('There is no msg id, where reactions can be obtained!')
         
         spectators_msg = await ctx.channel.fetch_message(sm_id)
+        return spectators_msg
+    
+    async def get_spectators(self, ctx: Context) -> list[Union[User, Member]]:
+        spectators_msg = self._get_gathering_spectators_msg(ctx)
         SPECTATOR_EMOJI_IND = 0
         spectators_async_iter = spectators_msg.reactions[SPECTATOR_EMOJI_IND].users()
         spectators = [
