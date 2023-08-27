@@ -5,9 +5,9 @@ from classes.EventStage import EventStage
 from classes.VoteList import ListCategory
 from discord.ext.commands import Context
 from discord import User, Member
+from classes.SQLiteClient import EventSession
 
-class NeuroEventBot(commands.Bot):
-    current_stage: EventStage
+class NeuroEventBot(commands.Bot):    
     spectators: list[int]
     spectators_msg_id: int
     
@@ -18,10 +18,14 @@ class NeuroEventBot(commands.Bot):
     
     
     
+    
+    
     def __init__(self, **args):
         super().__init__(command_prefix=Texts.PREFIX, **args)
         
-        self.current_stage = EventStage.NOT_STARTED
+        
+        
+        
         self.organizers = [
             252453718165815296, #petrarkius
         ]
@@ -31,6 +35,17 @@ class NeuroEventBot(commands.Bot):
         self.spectators_msg_id = None
         # self.art_top = {}
         self.top_lists = {}
+        
+        
+    @property
+    def current_stage(self) -> EventStage:
+        stage = 0
+        return stage
+    
+    @current_stage.setter
+    def current_stage(self, stage) -> EventSession:
+        stage = 0
+        return stage
         
     async def setup_hook(self):
         await self.tree.sync()
