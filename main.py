@@ -99,6 +99,10 @@ if __name__ == '__main__':
         
         await ctx.reply(Texts.VOTING_STARTED)
         
+    @NEB.hybrid_command()
+    async def get_total_scores(ctx: Context):
+        pass
+
     @NEB.event
     async def on_message(msg: discord.Message):
         if msg.author == NEB.user:

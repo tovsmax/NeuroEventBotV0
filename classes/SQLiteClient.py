@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from classes.DBModels import Base, EventSession
+from classes.DBModels import Base, EventSession, RankedArtData
 import os
 
 if os.environ is None or os.environ['DEBUG'] == 'False':
@@ -27,8 +27,9 @@ class SQLiteClient:
 
     @classmethod
     def create_event_session(cls):
+        event_session = EventSession()
+        
         with Session(cls._engine) as con:
-            event_session = EventSession()
             con.add(event_session)
             con.commit()
 
@@ -57,6 +58,10 @@ class SQLiteClient:
             event_sessions = con.scalars(query).fetchall()
 
         return event_sessions
+    
+    @classmethod
+    def rank_art(cls, rank, title, voter):
+        ranked_art = RankedArtData()
 
 
 if __name__ == '__main__':
