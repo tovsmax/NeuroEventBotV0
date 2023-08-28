@@ -10,10 +10,6 @@ class NeuroEventBot(commands.Bot):
     
     def __init__(self, **args):
         super().__init__(command_prefix=Texts.PREFIX, **args)
-                
-        self.organizers = [
-            252453718165815296, #petrarkius
-        ]
         
         self.art_dict = {}
         self.spectators = []

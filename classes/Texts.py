@@ -1,6 +1,7 @@
 class Texts:
     PREFIX = '!ne '
 
+    VOTING_NOT_ORGANIZER = '❌ Ты не организатор!'
     VOTING_GATHERING_NOT_STARTED = '❌ Участники ивента пока не начали скидывать свои работы!'
     VOTING_STARTED = 'Бланки списков разосланы.'
     VOTING_TITLE_PLACEHOLDER = 'Выбери арт на {0}-е место'
