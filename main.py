@@ -37,7 +37,11 @@ if __name__ == '__main__':
         
     @NEB.hybrid_command()
     async def get_total_scores(ctx: Context):
-        pass
+        
+        finish = Finishing(NEB)
+        result = finish.get_voting_result()
+        
+        await ctx.reply(result)
             
     NEB.run(Config.token)
 
