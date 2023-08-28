@@ -9,25 +9,22 @@ if __name__ == '__main__':
     NEB = NeuroEventBot(intents=Config.intents)
 
     @NEB.hybrid_command()
-    async def send_lists(ctx: Context, vote_items: str, artists: str, spectators: str = ''):
+    async def send_lists(ctx: Context, artists_and_arts: str, spectators: str = ''):
         if not Organizers().is_organizer(ctx.author.id):
             await ctx.reply(Texts.VOTING_NOT_ORGANIZER)
             return
-        
-        voters_pattern = '<@(\d+)>'
-        artist_list = re.findall(voters_pattern, artists)
-        spectator_list = re.findall(voters_pattern, spectators)
-        
-        ptrn_title_with_quotes = r'"([^"]*)",?'
-        ptrn_coma_separated_title = r'(.+?),'
-        ptrn_last_title = r'(.+?)$'
-        arts_pattern = f'{ptrn_title_with_quotes}|{ptrn_coma_separated_title}|{ptrn_last_title}'
-        vote_item_list = re.findall(arts_pattern, vote_items)
+                
+        for artist_and_art in artists_and_arts.split(','):
+            pattern = r'^<@(\d+)>:(.*)$'
+            artist_id, art_title = re.findall(pattern, artist_and_art)[0]
+            
+            NEB.art_dict[int(artist_id)] = art_title
         
         voting = Voting(NEB)
         
         await voting.send_lists_to_artists()
-        await voting.send_lists_to_spectators()            
+        
+        # await voting.send_lists_to_spectators()
         
         await ctx.reply(Texts.VOTING_STARTED)
         
