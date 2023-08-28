@@ -4,6 +4,3 @@ __pychache__/
 
 .env
 *.pyc
-
-NEB_test.db
-NEB.db

@@ -1,8 +1,6 @@
 from discord import Intents
-from dotenv import load_dotenv
 import os
 
-load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 intents = Intents.default()
