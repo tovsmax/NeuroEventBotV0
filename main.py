@@ -20,11 +20,18 @@ if __name__ == '__main__':
             
             NEB.art_dict[int(artist_id)] = art_title
         
+        spectator_pattern = '<@(\d+)>'
+        spectator_strs = re.findall(spectator_pattern, spectators)
+        
+        spectator_list = [
+            int(spectator_str)
+            for spectator_str in spectator_strs
+        ]
+        
         voting = Voting(NEB)
         
         await voting.send_lists_to_artists()
-        
-        # await voting.send_lists_to_spectators()
+        await voting.send_lists_to_spectators(spectator_list)
         
         await ctx.reply(Texts.VOTING_STARTED)
         

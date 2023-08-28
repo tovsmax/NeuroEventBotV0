@@ -108,12 +108,9 @@ class Voting:
         )
         
     
-    async def send_lists_to_spectators(self, ctx: Context):
-        spectators = await self.NEB.get_spectators(ctx)
-        
-        HUMANS_START_IND = 1
-        for spectator in spectators[HUMANS_START_IND:]:
-            list_items = list(self.NEB.art_dict.values())
+    async def send_lists_to_spectators(self, spectators: list[int]):
+        list_items = list(self.NEB.art_dict.values())
+        for spectator in spectators:
             await self._send_list(spectator, list_items)
     
     
