@@ -61,13 +61,13 @@ class VoteListView(ui.View):
     )
     async def submit_button(self, interaction: discord.Interaction, btn: discord.ui.Button):
         send = interaction.response.send_message
-        top_items = list(self.top_list.values())
+        top_items = self.top_list
                 
-        if None in top_items:
+        if None in top_items.values():
             await send(Texts.VOTING_EMPTY_RANK)
             return
 
-        if len(set(top_items)) != len(top_items):
+        if len(set(top_items.values())) != len(top_items):
             await send(Texts.VOTING_MULTIPLE_RANK)
             return
         
@@ -151,6 +151,10 @@ class Finishing:
         }
         
         for categorized_top_list in top_lists.values():
+            #TODO: Возможно стоит удалить
+            if {} in categorized_top_list.values():
+                continue
+            
             for category, top_list in categorized_top_list.items():
                 category_name = list_category_to_str[category]
                 for rank, art_title in top_list.items():
