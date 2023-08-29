@@ -61,4 +61,3 @@ if __name__ == '__main__':
         await ctx.reply(result)
             
     NEB.run(Config.token)
-

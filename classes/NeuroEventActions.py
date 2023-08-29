@@ -110,7 +110,8 @@ class Voting:
     
     async def send_lists_to_spectators(self, spectators: list[int]):
         list_items = list(self.NEB.art_dict.values())
-        for spectator in spectators:
+        for spectator_id in spectators:
+            spectator = self.NEB.get_user(spectator_id)
             await self._send_list(spectator, list_items)
     
     
